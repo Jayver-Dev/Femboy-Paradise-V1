@@ -466,6 +466,7 @@ mainTab:button({
         if enabled then
             loadstring(game:HttpGet("https://raw.githubusercontent.com/qzrtz/roblox-hitbox-expander/main/script"))()
     end
+end
 })
 
 mainTab:button({
