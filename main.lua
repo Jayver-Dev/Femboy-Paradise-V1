@@ -138,7 +138,7 @@ end
 -- Tabs
 local mainTab = gui:tab{
 	Icon = "rbxassetid://6034996695",
-	Name = "Stronger ESP/Aimbot"
+	Name = "Femboy ESP/Aimbot"
 }
 
 mainTab:button({
