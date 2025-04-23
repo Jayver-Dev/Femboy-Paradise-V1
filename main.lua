@@ -451,7 +451,6 @@ localPlayerTab:button({
 miscTab:button({
     Name = "Blade Ball Auto Parry",
     Callback = function(enabled)
-        if enabled then
             loadstring(game:HttpGet("https://raw.githubusercontent.com/2VQuiet/AutoParryBladeBall/main/Auto%20Parry%20Script"))()
         end
     end
@@ -460,7 +459,6 @@ miscTab:button({
 mainTab:button({
     Name = "Hitbox Expander",
     Callback = function(enabled)
-        if enabled then
             loadstring(game:HttpGet("https://raw.githubusercontent.com/qzrtz/roblox-hitbox-expander/main/script"))()
     end
 end
@@ -469,7 +467,6 @@ end
 mainTab:button({
     Name = "Crosshair Customizer",
     Callback = function(enabled)
-        if enabled then
             loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Crosshair-V2/main/Resources/Scripts/Main.lua"))()
         end
     end
