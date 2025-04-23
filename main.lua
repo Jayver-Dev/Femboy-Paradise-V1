@@ -448,14 +448,11 @@ localPlayerTab:button({
 	end
 })
 
-miscTab:toggle({
+miscTab:button({
     Name = "Blade Ball Auto Parry",
     Callback = function(enabled)
         if enabled then
             loadstring(game:HttpGet("https://raw.githubusercontent.com/2VQuiet/AutoParryBladeBall/main/Auto%20Parry%20Script"))()
-            gui:set_status("Auto Parry: ON")
-        else
-            gui:set_status("Auto Parry: OFF")
         end
     end
 })
