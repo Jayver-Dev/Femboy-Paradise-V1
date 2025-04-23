@@ -1,3 +1,4 @@
+-- Load Library
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/deeeity/mercury-lib/master/src.lua"))()
 
 -- Custom Theme
@@ -5,8 +6,8 @@ Library.Themes.CustomPinkBlue = {
 	Main = Color3.fromRGB(255, 182, 193),
 	Secondary = Color3.fromRGB(173, 216, 230),
 	Tertiary = Color3.fromRGB(255, 105, 180),
-	StrongText = Color3.fromRGB(255, 255, 255),
-	WeakText = Color3.fromRGB(200, 200, 200)
+	StrongText = Color3.fromRGB(173, 173, 173),
+	WeakText = Color3.fromRGB(211,211,211)
 }
 
 local gui = Library:create{
@@ -21,28 +22,47 @@ local UserInputService = game:GetService("UserInputService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
 
--- Drawing API check
-local Drawing = (Drawing or getgenv and getgenv().Drawing)
-if not Drawing then
-	warn("Drawing API not supported on this executor.")
-	return
-end
-
--- Aimbot
+-- Aimbot Variables
 local aimbotEnabled = false
 local targetPart = "Head"
 local aimbotFOV = 100
 
+-- ESP Variables
+local espEnabled = false
+local boxESP = {}
+
+-- Infinite Jump
+local infJumpEnabled = false
+UserInputService.JumpRequest:Connect(function()
+	if infJumpEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+		LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+	end
+end)
+
+-- Noclip
+local noclipEnabled = false
+RunService.Stepped:Connect(function()
+	if noclipEnabled and LocalPlayer.Character then
+		for _, v in pairs(LocalPlayer.Character:GetDescendants()) do
+			if v:IsA("BasePart") and v.CanCollide then
+				v.CanCollide = false
+			end
+		end
+	end
+end)
+
+-- Aimbot Function
 local function getClosestTarget()
 	local closest = nil
 	local shortest = aimbotFOV
+	local mouseLocation = UserInputService:GetMouseLocation()
 
-	for _, player in pairs(Players:GetPlayers()) do
+	for _, player in ipairs(Players:GetPlayers()) do
 		if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild(targetPart) then
 			local part = player.Character[targetPart]
 			local screenPos, onScreen = Camera:WorldToViewportPoint(part.Position)
 			if onScreen then
-				local dist = (Vector2.new(screenPos.X, screenPos.Y) - UserInputService:GetMouseLocation()).Magnitude
+				local dist = (Vector2.new(screenPos.X, screenPos.Y) - mouseLocation).Magnitude
 				if dist < shortest then
 					shortest = dist
 					closest = part
@@ -61,18 +81,16 @@ local function aimbotLock()
 	end
 end
 
--- ESP
-local espEnabled = false
-local boxESP = {}
-
+-- ESP Drawing
 function createBoxESP(player)
 	if player == LocalPlayer then return end
-	boxESP[player] = Drawing.new("Square")
-	boxESP[player].Thickness = 2
-	boxESP[player].Transparency = 1
-	boxESP[player].Color = Color3.fromRGB(255, 105, 180)
-	boxESP[player].Filled = false
-	boxESP[player].Visible = false
+	local box = Drawing.new("Square")
+	box.Thickness = 2
+	box.Transparency = 1
+	box.Color = Color3.fromRGB(255, 105, 180)
+	box.Filled = false
+	box.Visible = false
+	boxESP[player] = box
 end
 
 function removeBoxESP(player)
@@ -82,34 +100,25 @@ function removeBoxESP(player)
 	end
 end
 
-function clearESP()
-	for player, box in pairs(boxESP) do
-		box:Remove()
-	end
-	boxESP = {}
-end
-
 function updateBoxESP()
-	for _, player in pairs(Players:GetPlayers()) do
+	for _, player in ipairs(Players:GetPlayers()) do
 		if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Head") then
 			if not boxESP[player] then
 				createBoxESP(player)
 			end
-
-			local hrp = player.Character:FindFirstChild("HumanoidRootPart")
-			local head = player.Character:FindFirstChild("Head")
+			local char = player.Character
+			local hrp = char.HumanoidRootPart
+			local head = char.Head
 			local pos, onScreen = Camera:WorldToViewportPoint(hrp.Position)
-
 			if onScreen then
 				local headPos = Camera:WorldToViewportPoint(head.Position + Vector3.new(0, 0.3, 0))
 				local feetPos = Camera:WorldToViewportPoint(hrp.Position - Vector3.new(0, 2.5, 0))
-
 				local height = math.abs(headPos.Y - feetPos.Y)
 				local width = height / 2
-
-				boxESP[player].Size = Vector2.new(width, height)
-				boxESP[player].Position = Vector2.new(pos.X - width / 2, pos.Y - height / 2)
-				boxESP[player].Visible = espEnabled
+				local box = boxESP[player]
+				box.Size = Vector2.new(width, height)
+				box.Position = Vector2.new(pos.X - width / 2, pos.Y - height / 2)
+				box.Visible = espEnabled
 			else
 				boxESP[player].Visible = false
 			end
@@ -119,17 +128,13 @@ function updateBoxESP()
 	end
 end
 
--- Cleanup
-Players.PlayerRemoving:Connect(removeBoxESP)
-
--- GUI Tab
-local tab = gui:tab{
+-- Tabs
+local mainTab = gui:tab{
 	Icon = "rbxassetid://6034996695",
-	Name = "Femboy ESP/Aimbot"
+	Name = "Stronger ESP/Aimbot"
 }
 
--- Buttons
-tab:button({
+mainTab:button({
 	Name = "Toggle Aimbot",
 	Callback = function()
 		aimbotEnabled = not aimbotEnabled
@@ -137,18 +142,15 @@ tab:button({
 	end
 })
 
-tab:button({
+mainTab:button({
 	Name = "Toggle ESP",
 	Callback = function()
 		espEnabled = not espEnabled
 		gui:set_status("ESP: " .. (espEnabled and "ON" or "OFF"))
-		if not espEnabled then
-			clearESP()
-		end
 	end
 })
 
-tab:dropdown({
+mainTab:dropdown({
 	Name = "Target Part",
 	StartingText = "Head",
 	Items = {"Head", "Torso", "HumanoidRootPart"},
@@ -157,7 +159,7 @@ tab:dropdown({
 	end
 })
 
-tab:slider({
+mainTab:slider({
 	Name = "Aimbot FOV",
 	Min = 50,
 	Max = 300,
@@ -167,7 +169,7 @@ tab:slider({
 	end
 })
 
-tab:keybind({
+mainTab:keybind({
 	Name = "Toggle Aimbot",
 	Key = Enum.KeyCode.Q,
 	Callback = function()
@@ -175,10 +177,162 @@ tab:keybind({
 	end
 })
 
--- Frame updates
-RunService.RenderStepped:Connect(function()
-	aimbotLock()
-	if espEnabled then
-		updateBoxESP()
+-- Misc Tab
+local miscTab = gui:tab{
+	Icon = "rbxassetid://6031280882",
+	Name = "Femboy Misc"
+}
+
+miscTab:button({
+	Name = "Toggle Wall Phase (Noclip)",
+	Callback = function()
+		noclipEnabled = not noclipEnabled
+		gui:set_status("Noclip: " .. (noclipEnabled and "ENABLED" or "DISABLED"))
 	end
+})
+
+miscTab:button({
+	Name = "Toggle Floaty Jumps (Inf Jump)",
+	Callback = function()
+		infJumpEnabled = not infJumpEnabled
+		gui:set_status("Infinite Jump: " .. (infJumpEnabled and "ENABLED" or "DISABLED"))
+	end
+})
+
+-- Local Player Tab
+-- Local Player Tab with Player Icon
+local localPlayerTab = gui:tab{
+    Icon = "rbxassetid://117259180607823",  -- Replace this with the ID of the player icon or your custom icon.
+    Name = "Femboy Local Player"
+}
+
+-- Speed Control
+local speed = 16  -- Default speed value
+local speedSlider = localPlayerTab:slider({
+    Name = "Speed Control",
+    Min = 16,
+    Max = 200,
+    Default = speed,
+    Callback = function(value)
+        speed = value
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+            LocalPlayer.Character.Humanoid.WalkSpeed = speed
+        end
+    end
+})
+
+-- Jump Power Control
+local jumpPower = 50  -- Default jump power value
+local jumpSlider = localPlayerTab:slider({
+    Name = "Jump Power Control",
+    Min = 50,
+    Max = 200,
+    Default = jumpPower,
+    Callback = function(value)
+        jumpPower = value
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+            LocalPlayer.Character.Humanoid.JumpPower = jumpPower
+        end
+    end
+})
+
+-- God Mode
+local godModeEnabled = false
+local godModeButton = localPlayerTab:button({
+    Name = "Toggle God Mode",
+    Callback = function()
+        godModeEnabled = not godModeEnabled
+        if godModeEnabled then
+            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+                LocalPlayer.Character.Humanoid.Health = LocalPlayer.Character.Humanoid.MaxHealth
+            end
+        end
+        gui:set_status("God Mode: " .. (godModeEnabled and "ON" or "OFF"))
+    end
+})
+
+-- Invisibility (Client-side)
+local function applyClientInvisibility()
+    local char = LocalPlayer.Character
+    if not char or not char:FindFirstChildOfClass("Humanoid") then return end
+
+    -- Set transparency to 1 for all body parts and accessories
+    for _, part in ipairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.Transparency = 1
+            part.CanCollide = false
+        elseif part:IsA("Accessory") then
+            part:Destroy() -- Remove accessories entirely
+        end
+    end
+
+    -- Hide the humanoid health bar completely
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOff
+    end
+end
+
+local function revertInvisibility()
+    local char = LocalPlayer.Character
+    if not char or not char:FindFirstChildOfClass("Humanoid") then return end
+
+    -- Reset transparency and collision for all parts
+    for _, part in ipairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.Transparency = 0
+            part.CanCollide = true
+        end
+    end
+
+    -- Show the humanoid health bar again
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.Both
+    end
+end
+
+local invisibilityEnabled = false
+local invisibilityButton = localPlayerTab:button({
+    Name = "Toggle Invisibility",
+    Callback = function()
+        invisibilityEnabled = not invisibilityEnabled
+        if invisibilityEnabled then
+            applyClientInvisibility()
+        else
+            revertInvisibility()
+        end
+        gui:set_status("Invisibility: " .. (invisibilityEnabled and "ON" or "OFF"))
+    end
+})
+
+-- Reset Character
+local resetCharacterButton = localPlayerTab:button({
+    Name = "Reset Character",
+    Callback = function()
+        -- Force character reset by setting Character to nil
+        LocalPlayer.Character = nil
+
+        -- Wait a moment and let the character respawn automatically
+        wait(1)
+        -- Optionally, you could apply any other behavior after respawn if necessary
+    end
+})
+
+-- Apply Speed and Jump Power on Character Spawn
+game.Players.LocalPlayer.CharacterAdded:Connect(function(char)
+    -- Set initial values
+    char:WaitForChild("Humanoid").WalkSpeed = speed
+    char:WaitForChild("Humanoid").JumpPower = jumpPower
+end)
+
+
+-- Update ESP
+RunService.RenderStepped:Connect(function()
+	updateBoxESP()
+	aimbotLock()
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+	removeBoxESP(player)
 end)
