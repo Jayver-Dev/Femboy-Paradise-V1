@@ -350,34 +350,9 @@ gui:Credit{
 	Discord = "j4y11"
 }
 
--- Add tabs for each new feature group
-local wallhackTab = gui:tab{
-    Name = "Femboy Vision",
-    Icon = "rbxassetid://6035047390"
-}
-
-local teleportTab = gui:tab{
-    Name = "Femboy Teleport",
-    Icon = "rbxassetid://6035047377"
-}
-
-local visualsTab = gui:tab{
-    Name = "Femboy Visuals",
-    Icon = "rbxassetid://6035047402"
-}
-
-local soundTab = gui:tab{
-    Name = "Femboy Sound",
-    Icon = "rbxassetid://6035047410"
-}
-
-local followTab = gui:tab{
-    Name = "Femboy Follow",
-    Icon = "rbxassetid://6035047420"
-}
 
 -- Wall Hack
-wallhackTab:button({
+mainTab:button({
     Name = "Toggle Wall Hack",
     Callback = function()
         for _, obj in ipairs(workspace:GetDescendants()) do
@@ -390,7 +365,7 @@ wallhackTab:button({
 })
 
 -- Teleport to Player
-teleportTab:textbox({
+miscTab:textbox({
     Name = "Teleport To Player",
     Placeholder = "Enter Player Name",
     Callback = function(input)
@@ -405,7 +380,7 @@ teleportTab:textbox({
 })
 
 -- Name Tag ESP
-visualsTab:toggle({
+mainTab:toggle({
     Name = "Name Tag ESP",
     Callback = function(enabled)
         for _, player in pairs(Players:GetPlayers()) do
@@ -432,7 +407,7 @@ visualsTab:toggle({
 })
 
 -- Sound Toggle
-soundTab:toggle({
+miscTab:toggle({
     Name = "Mute Game Sound",
     Callback = function(enabled)
         for _, sound in ipairs(workspace:GetDescendants()) do
@@ -444,7 +419,7 @@ soundTab:toggle({
 })
 
 -- Player Follow
-followTab:textbox({
+miscTab:textbox({
     Name = "Follow Player",
     Placeholder = "Enter Player Name",
     Callback = function(input)
