@@ -349,3 +349,115 @@ gui:Credit{
 	Description = "Script Developer",
 	Discord = "j4y11"
 }
+
+-- Add tabs for each new feature group
+local wallhackTab = gui:tab{
+    Name = "Femboy Vision",
+    Icon = "rbxassetid://6035047390"
+}
+
+local teleportTab = gui:tab{
+    Name = "Femboy Teleport",
+    Icon = "rbxassetid://6035047377"
+}
+
+local visualsTab = gui:tab{
+    Name = "Femboy Visuals",
+    Icon = "rbxassetid://6035047402"
+}
+
+local soundTab = gui:tab{
+    Name = "Femboy Sound",
+    Icon = "rbxassetid://6035047410"
+}
+
+local followTab = gui:tab{
+    Name = "Femboy Follow",
+    Icon = "rbxassetid://6035047420"
+}
+
+-- Wall Hack
+wallhackTab:button({
+    Name = "Toggle Wall Hack",
+    Callback = function()
+        for _, obj in ipairs(workspace:GetDescendants()) do
+            if obj:IsA("BasePart") and not obj:IsDescendantOf(Players.LocalPlayer.Character) then
+                obj.LocalTransparencyModifier = 0.5
+            end
+        end
+        gui:set_status("Wall Hack activated!")
+    end
+})
+
+-- Teleport to Player
+teleportTab:textbox({
+    Name = "Teleport To Player",
+    Placeholder = "Enter Player Name",
+    Callback = function(input)
+        local target = Players:FindFirstChild(input)
+        if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+            LocalPlayer.Character:MoveTo(target.Character.HumanoidRootPart.Position)
+            gui:set_status("Teleported to " .. input)
+        else
+            gui:set_status("Player not found!")
+        end
+    end
+})
+
+-- Name Tag ESP
+visualsTab:toggle({
+    Name = "Name Tag ESP",
+    Callback = function(enabled)
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer then
+                if enabled then
+                    local tag = Instance.new("BillboardGui", player.Character)
+                    tag.Name = "NameTag"
+                    tag.Size = UDim2.new(0, 100, 0, 20)
+                    tag.AlwaysOnTop = true
+                    tag.StudsOffset = Vector3.new(0, 3, 0)
+
+                    local label = Instance.new("TextLabel", tag)
+                    label.Text = player.Name
+                    label.Size = UDim2.new(1, 0, 1, 0)
+                    label.TextColor3 = Color3.fromRGB(255, 105, 180)
+                    label.BackgroundTransparency = 1
+                else
+                    local existing = player.Character:FindFirstChild("NameTag")
+                    if existing then existing:Destroy() end
+                end
+            end
+        end
+    end
+})
+
+-- Sound Toggle
+soundTab:toggle({
+    Name = "Mute Game Sound",
+    Callback = function(enabled)
+        for _, sound in ipairs(workspace:GetDescendants()) do
+            if sound:IsA("Sound") then
+                sound.Volume = enabled and 0 or 1
+            end
+        end
+    end
+})
+
+-- Player Follow
+followTab:textbox({
+    Name = "Follow Player",
+    Placeholder = "Enter Player Name",
+    Callback = function(input)
+        local followTarget = Players:FindFirstChild(input)
+        if followTarget and followTarget.Character then
+            RunService.RenderStepped:Connect(function()
+                if followTarget.Character and followTarget.Character:FindFirstChild("HumanoidRootPart") then
+                    LocalPlayer.Character:MoveTo(followTarget.Character.HumanoidRootPart.Position + Vector3.new(2, 0, 2))
+                end
+            end)
+            gui:set_status("Following " .. input)
+        else
+            gui:set_status("Player not found!")
+        end
+    end
+})
