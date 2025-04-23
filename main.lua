@@ -453,7 +453,6 @@ miscTab:button({
     Callback = function(enabled)
             loadstring(game:HttpGet("https://raw.githubusercontent.com/2VQuiet/AutoParryBladeBall/main/Auto%20Parry%20Script"))()
         end
-    end
 })
 
 mainTab:button({
@@ -461,15 +460,12 @@ mainTab:button({
     Callback = function(enabled)
             loadstring(game:HttpGet("https://raw.githubusercontent.com/qzrtz/roblox-hitbox-expander/main/script"))()
     end
-end
-})
 
 mainTab:button({
     Name = "Crosshair Customizer",
     Callback = function(enabled)
             loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Crosshair-V2/main/Resources/Scripts/Main.lua"))()
         end
-    end
 })
 
 localPlayerTab:toggle({
