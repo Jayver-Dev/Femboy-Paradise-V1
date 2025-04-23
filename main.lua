@@ -460,6 +460,7 @@ mainTab:button({
     Callback = function(enabled)
             loadstring(game:HttpGet("https://raw.githubusercontent.com/qzrtz/roblox-hitbox-expander/main/script"))()
     end
+})
 
 mainTab:button({
     Name = "Crosshair Customizer",
