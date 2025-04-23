@@ -15,6 +15,13 @@ local gui = Library:create{
 	Theme = Library.Themes.CustomPinkBlue
 }
 
+gui:Notification{
+	Title = "Welcome to FemboyHub",
+	Text = "You little twink femboy",
+	Duration = 3,
+	Callback = function() end
+}
+
 -- Services
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -336,3 +343,9 @@ end)
 Players.PlayerRemoving:Connect(function(player)
 	removeBoxESP(player)
 end)
+
+gui:Credit{
+	Name = "J4Y",
+	Description = "Script Developer",
+	Discord = "j4y11"
+}
