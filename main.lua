@@ -189,14 +189,6 @@ local miscTab = gui:tab{
 	Icon = "rbxassetid://6031280882",
 	Name = "Femboy Misc"
 }
-miscTab:button({
-	Name = "Toggle Floaty Jumps (Inf Jump)",
-	Callback = function()
-		infJumpEnabled = not infJumpEnabled
-		gui:set_status("Infinite Jump: " .. (infJumpEnabled and "ENABLED" or "DISABLED"))
-	end
-})
-
 -- Local Player Tab
 -- Local Player Tab with Player Icon
 local localPlayerTab = gui:tab{
@@ -434,5 +426,13 @@ localPlayerTab:button({
 	Callback = function()
 		noclipEnabled = not noclipEnabled
 		gui:set_status("Noclip: " .. (noclipEnabled and "ENABLED" or "DISABLED"))
+	end
+})
+
+localPlayerTab:button({
+	Name = "Toggle Floaty Jumps (Inf Jump)",
+	Callback = function()
+		infJumpEnabled = not infJumpEnabled
+		gui:set_status("Infinite Jump: " .. (infJumpEnabled and "ENABLED" or "DISABLED"))
 	end
 })
