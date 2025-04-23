@@ -38,14 +38,6 @@ local aimbotFOV = 100
 local espEnabled = false
 local boxESP = {}
 
--- Infinite Jump
-local infJumpEnabled = false
-UserInputService.JumpRequest:Connect(function()
-	if infJumpEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
-		LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
-	end
-end)
-
 -- Noclip
 local noclipEnabled = false
 RunService.Stepped:Connect(function()
@@ -428,6 +420,14 @@ localPlayerTab:button({
 		gui:set_status("Noclip: " .. (noclipEnabled and "ENABLED" or "DISABLED"))
 	end
 })
+
+-- Infinite Jump
+local infJumpEnabled = false
+UserInputService.JumpRequest:Connect(function()
+	if infJumpEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+		LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+	end
+end)
 
 localPlayerTab:button({
 	Name = "Toggle Floaty Jumps (Inf Jump)",
