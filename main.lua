@@ -288,12 +288,22 @@ local invisibilityButton = localPlayerTab:button({
     end
 })
 
+local function resetCharacter()
+    local player = game:GetService("Players").LocalPlayer
+    local char = player.Character
+
+    if char and char:FindFirstChild("Humanoid") then
+        char.Humanoid.Health = 0
+    end
+end
+
+
 -- Reset Character
 local resetCharacterButton = localPlayerTab:button({
     Name = "Reset Character",
     Callback = function()
         -- Force character reset by setting Character to nil
-        game:GetService("Players").LocalPlayer:LoadCharacter()
+        resetCharacter()
 
 
         -- Wait a moment and let the character respawn automatically
