@@ -460,26 +460,19 @@ miscTab:toggle({
     end
 })
 
-mainTab:toggle({
+mainTab:button({
     Name = "Hitbox Expander",
     Callback = function(enabled)
         if enabled then
             loadstring(game:HttpGet("https://raw.githubusercontent.com/qzrtz/roblox-hitbox-expander/main/script"))()
-            gui:set_status("Hitbox Expander: ON")
-        else
-            gui:set_status("Hitbox Expander: OFF")
-        end
     end
 })
 
-mainTab:toggle({
+mainTab:button({
     Name = "Crosshair Customizer",
     Callback = function(enabled)
         if enabled then
             loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Crosshair-V2/main/Resources/Scripts/Main.lua"))()
-            gui:set_status("Crosshair: ON")
-        else
-            gui:set_status("Crosshair: OFF")
         end
     end
 })
