@@ -288,15 +288,15 @@ local invisibilityButton = localPlayerTab:button({
     end
 })
 
-local function resetCharacter()
-    local player = game:GetService("Players").LocalPlayer
-    local char = player.Character
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 
-    if char and char:FindFirstChild("Humanoid") then
-        char.Humanoid.Health = 0
+local function resetCharacter()
+    local character = LocalPlayer.Character
+    if character and character:FindFirstChild("Humanoid") then
+        character.Humanoid.Health = 0
     end
 end
-
 
 -- Reset Character
 local resetCharacterButton = localPlayerTab:button({
