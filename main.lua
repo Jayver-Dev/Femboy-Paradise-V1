@@ -436,3 +436,38 @@ miscTab:textbox({
         end
     end
 })
+
+local noclipEnabled = false
+
+local function toggleNoclip()
+    noclipEnabled = not noclipEnabled
+    if noclipEnabled then
+        noclipConnection = game:GetService("RunService").Stepped:Connect(function()
+            for _, part in ipairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+                if part:IsA("BasePart") and part.CanCollide then
+                    part.CanCollide = false
+                end
+            end
+        end)
+    else
+        if noclipConnection then
+            noclipConnection:Disconnect()
+            noclipConnection = nil
+        end
+        -- Restore collisions when disabling
+        for _, part in ipairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
+            end
+        end
+    end
+end
+
+
+localPlayerTab:Toggle{
+    Name = "Toggle Noclip",
+    Flag = "NoclipToggle",
+    Callback = toggleNoclip
+}
+
+
