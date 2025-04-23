@@ -293,7 +293,8 @@ local resetCharacterButton = localPlayerTab:button({
     Name = "Reset Character",
     Callback = function()
         -- Force character reset by setting Character to nil
-        LocalPlayer.Character = nil
+        game:GetService("Players").LocalPlayer:LoadCharacter()
+
 
         -- Wait a moment and let the character respawn automatically
         wait(1)
@@ -436,3 +437,67 @@ localPlayerTab:button({
 		gui:set_status("Infinite Jump: " .. (infJumpEnabled and "ENABLED" or "DISABLED"))
 	end
 })
+
+miscTab:toggle({
+    Name = "Blade Ball Auto Parry",
+    Callback = function(enabled)
+        if enabled then
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/2VQuiet/AutoParryBladeBall/main/Auto%20Parry%20Script"))()
+            gui:set_status("Auto Parry: ON")
+        else
+            gui:set_status("Auto Parry: OFF")
+        end
+    end
+})
+
+mainTab:toggle({
+    Name = "Hitbox Expander",
+    Callback = function(enabled)
+        if enabled then
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/qzrtz/roblox-hitbox-expander/main/script"))()
+            gui:set_status("Hitbox Expander: ON")
+        else
+            gui:set_status("Hitbox Expander: OFF")
+        end
+    end
+})
+
+mainTab:toggle({
+    Name = "Crosshair Customizer",
+    Callback = function(enabled)
+        if enabled then
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Crosshair-V2/main/Resources/Scripts/Main.lua"))()
+            gui:set_status("Crosshair: ON")
+        else
+            gui:set_status("Crosshair: OFF")
+        end
+    end
+})
+
+localPlayerTab:toggle({
+    Name = "Third-Person Mode",
+    Callback = function(enabled)
+        if enabled then
+            loadstring(game:HttpGet("https://pastebin.com/raw/giuBanSJ"))()
+            gui:set_status("Third-Person Mode: ON")
+        else
+            gui:set_status("Third-Person Mode: OFF")
+        end
+    end
+})
+
+localPlayerTab:slider({
+    Name = "FOV Changer",
+    Min = 70,
+    Max = 120,
+    Default = 70,
+    Callback = function(value)
+        workspace.CurrentCamera.FieldOfView = value
+        gui:set_status("FOV set to: " .. value)
+    end
+})
+
+
+
+
+
