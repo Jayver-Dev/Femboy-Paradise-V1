@@ -1,30 +1,30 @@
 local centrl = loadstring(game:HttpGet("https://raw.githubusercontent.com/yarrosvault/CentrlV2/refs/heads/main/centrl", true))()
 
 centrl:load({
-    Logo = '115513435189491', -- ID Only (required, optional soon)
+    Logo = '115513435189491',
     ConfigEnabled = {
-        Enabled = true, -- If Config Saving is desired leave true
-        Cfolder = 'femmy', -- Folder Name
-        Cfile = 'Config' -- Config File Name (credits to rayfield for layout (not skidded)
+        Enabled = true,
+        Cfolder = 'femmy',
+        Cfile = 'Config'
     },
     Theme = {
-        Accent = Color3.fromRGB(234, 9, 215), -- Accent color
-        Hitbox = Color3.fromRGB(234, 9, 215), -- Hitbox color (ex. toggle, slider)
+        Accent = Color3.fromRGB(234, 9, 215),
+        Hitbox = Color3.fromRGB(234, 9, 215),
     }
 })
 
 local main = centrl:int({
-    Title = 'Femmy', -- Title of UI
-    Sub = 'Universal' -- Sub Text
+    Title = 'Femmy',
+    Sub = 'Universal'
 })
 
-local Tab = main:IntTab('Main') -- More Features Coming Soon!
+local Tab = main:IntTab('Main')
 
 local s1 = Tab:IntSection('Main', {
-    Side = 'L' -- Side of section ('L' - Left, 'R' - Right)
+    Side = 'L'
 })
 
--- WalkSpeed Slider
+-- WalkSpeed Modifier
 s1:createSlider({
     Title = 'WalkSpeed Modifier',
     Sliders = {
@@ -49,9 +49,9 @@ s1:createToggle({
     Callback = function(value)
         espEnabled = value
         if espEnabled then
-            -- Enable ESP functionality
+            -- Enable ESP
         else
-            -- Disable ESP functionality
+            -- Disable ESP
             for _, plr in pairs(game.Players:GetPlayers()) do
                 removeESP(plr)
             end
@@ -97,6 +97,17 @@ s1:createDropdown({
     Options = {"SourceSans", "Arial", "Garamond"},
     Callback = function(value)
         espFont = Enum.Font[value]
+    end,
+})
+
+-- Aimbot Toggle
+local aimbotEnabled = false
+s1:createToggle({
+    Title = 'Aimbot',
+    Config = true,
+    Value = false,
+    Callback = function(value)
+        aimbotEnabled = value
     end,
 })
 
@@ -161,7 +172,7 @@ local function updateESP(player)
         -- Update ESP box size dynamically
         local box = gui:FindFirstChild("ESPBox")
         if box then
-            box.Size = UDim2.new(1, 0, 1, 0) -- Adjust box size based on player size
+            box.Size = UDim2.new(1, 0, 1, 0)
         end
 
         -- Update Name Label
@@ -181,15 +192,38 @@ local function removeESP(player)
     end
 end
 
+-- Aimbot Logic
+local function aimbot()
+    if not aimbotEnabled then return end
+    local closestPlayer = nil
+    local shortestDistance = math.huge
+    local myPosition = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player ~= game.Players.LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local distance = (myPosition - player.Character.HumanoidRootPart.Position).Magnitude
+            if distance < shortestDistance then
+                closestPlayer = player
+                shortestDistance = distance
+            end
+        end
+    end
+
+    if closestPlayer then
+        -- Lock camera to closest player
+        local camera = game.Workspace.CurrentCamera
+        camera.CFrame = CFrame.new(camera.CFrame.Position, closestPlayer.Character.HumanoidRootPart.Position)
+    end
+end
+
 -- Main loop to manage ESP (Create & Update)
 game:GetService("RunService").RenderStepped:Connect(function()
     if not espEnabled then
-        -- Remove ESP if disabled
-        for _, plr in pairs(game.Players:GetPlayers()) do removeESP(plr) end
+        for _, plr in pairs(game.Players:GetPlayers()) do
+            removeESP(plr)
+        end
         return
     end
 
-    -- Loop through players and create/update ESP
     for _, plr in pairs(game.Players:GetPlayers()) do
         if plr ~= game.Players.LocalPlayer then
             if plr.Character and plr.Character:FindFirstChild("Head") then
@@ -199,7 +233,6 @@ game:GetService("RunService").RenderStepped:Connect(function()
         end
     end
 
-    -- NPC ESP
     if npcESP then
         for _, npc in pairs(workspace:GetDescendants()) do
             if npc:IsA("Model") and not game.Players:GetPlayerFromCharacter(npc) and npc:FindFirstChild("Head") and npc:FindFirstChild("Humanoid") then
@@ -209,6 +242,8 @@ game:GetService("RunService").RenderStepped:Connect(function()
             end
         end
     end
+
+    aimbot()  -- Call aimbot logic in each frame
 end)
 
 -- Clean up when players leave
