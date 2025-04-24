@@ -1,7 +1,7 @@
 local centrl = loadstring(game:HttpGet("https://raw.githubusercontent.com/yarrosvault/CentrlV2/refs/heads/main/centrl",true))()
 
 centrl:load({
-	Logo = '5632495668', -- ID Only (required, optional soon)
+	Logo = '17562026361', -- ID Only (required, optional soon)
 	ConfigEnabled = {
 		Enabled = true, -- If Config Saving is desired leave true
 		Cfolder = 'femmy', -- Folder Name
